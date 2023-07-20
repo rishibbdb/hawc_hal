@@ -3,7 +3,7 @@ from builtins import zip
 from past.utils import old_div
 from builtins import object
 import numpy as np
-
+import math
 from astromodels import use_astromodels_memoization
 from threeML.io.logging import setup_logger
 log = setup_logger(__name__)
@@ -57,7 +57,9 @@ class ConvolvedExtendedSource(object):
         lower_edges = np.array([x[0] for x in response.dec_bins])
         upper_edges = np.array([x[-1] for x in response.dec_bins])
         centers = np.array([x[1] for x in response.dec_bins])
-
+        #Rishi
+        log.info("Upper edges = %s " %(upper_edges))
+        log.info("Lower edges = %s " %(lower_edges)) 
         dec_bins_to_consider_idx = np.flatnonzero((upper_edges >= dec_min) & (lower_edges <= dec_max))
         log.info("Central bins = %s" %(dec_bins_to_consider_idx))
         # Wrap the selection so we have always one bin before and one after.

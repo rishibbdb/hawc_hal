@@ -247,7 +247,7 @@ class HAWCResponse(object):
 
             # Now we create a dictionary of ResponseBin instances for each dec bin name
             response_bins = collections.OrderedDict()
-
+            log.info("Dec list =%s",dec_list2) 
             #for dec_id in range(len(dec_bins)):
             for dec_id in dec_list2:
 
@@ -262,10 +262,16 @@ class HAWCResponse(object):
                     n_energy_bins = len(response_file[dec_id_label].keys(recursive=False))
 
                     response_bins_ids = list(range(n_energy_bins))
+                #log.info("Reponse bin ids= %s" %(response_bin_ids))
+                response_bins_ids = bin_list2
+                #log.info("Reponse bin ids= %s" %(response_bin_ids))
+                #log.info("BINLIST= %s"%(bin_list2))
                 log.info("Dec ID= %s" %(dec_id))
-                for response_bin_id in response_bin_ids:
+                #Rishi for response_bin_id in response_bin_ids:
+                for response_bin_id in bin_list2:
 
-                    this_response_bin = ResponseBin.from_ttree(
+                    try:
+                        this_response_bin = ResponseBin.from_ttree(
                         response_file,
                         dec_id,
                         response_bin_id,
@@ -275,9 +281,12 @@ class HAWCResponse(object):
                         dec_center,
                         max_dec, 
                         bin_list2
-                    )
-
-                    this_response_bins[response_bin_id] = this_response_bin
+                        )
+                        this_response_bins[response_bin_id] = this_response_bin
+                        print("checking bin and dec", dec_id, response_bin_id)
+                    except:
+                        log.info("Failed for Dec= %s"%dec_id)
+                        log.info("Failed for bin= %s"%response_bin_id)   
 
                 response_bins[dec_bins[dec_id][1]] = this_response_bins
 

@@ -90,7 +90,8 @@ class HAL(PluginPrototype):
             dec_arange=[roi.ra_dec_center[1]-roi.model_radius.to(u.deg).value, roi.ra_dec_center[1]+roi.model_radius.to(u.deg).value]
             dec_list = dec_index_search(response_file, dec_arange, use_module=True)
             print("Using declination list=", dec_list)
-
+            #dec_list.remove(0)
+            #print("Using declination list after removing 0=", dec_list)
         # Set up the flat-sky projection
         self.flat_sky_pixels_size = flat_sky_pixels_size
         self._flat_sky_projection = self._roi.get_flat_sky_projection(self.flat_sky_pixels_size)
@@ -218,15 +219,21 @@ class HAL(PluginPrototype):
     def _setup_psf_convolutors(self):
 
         central_response_bins = self._response.get_response_dec_bin(self._roi.ra_dec_center[1])
-
+        decb=self._roi.ra_dec_center[1]
+        log.info("Checking psf convolution for decband = %s"%decb)
         self._psf_convolutors = collections.OrderedDict()
+        #print(central_response_bins)
         for bin_id in central_response_bins:
             # Only set up PSF convolutors for active bins.
             if bin_id in self._active_planes:
-                self._psf_convolutors[bin_id] = PSFConvolutor(
-                    central_response_bins[bin_id].psf, self._flat_sky_projection
-                )
-
+                print("Bin ID = ", bin_id)  #Rishi
+                try:
+                   self._psf_convolutors[bin_id] = PSFConvolutor(central_response_bins[bin_id].psf, self._flat_sky_projection)
+ 
+                except:
+                   log.info("Fit failed for binID =%s" %bin_id) #Rishi
+                   self._active_planes.remove(bin_id)
+                   log.info("Bin %s removed from bin list for analysis" %bin_id)
     def _compute_likelihood_biases(self):
 
         for bin_label in self._maptree:
@@ -347,6 +354,7 @@ class HAL(PluginPrototype):
         log.info("----------")
 
         self._maptree.display()
+        #print(self._maptree.display(), file=open('/data/scratch/userspace/rbabu/J1849_analysis/NN/rhitest', 'a'))
 
         log.info("")
         # log.info("Active energy/nHit planes ({}):".format(len(self._active_planes)))
@@ -827,7 +835,6 @@ class HAL(PluginPrototype):
         subs[1].set_xticklabels(self._active_planes, rotation=30)
 
         subs[0].set_ylim(y_limits)
-
         return fig
 
     def get_log_like(self, individual_bins=False, return_null=False):

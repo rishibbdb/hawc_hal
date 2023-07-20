@@ -161,7 +161,8 @@ class MapTree(object):
         df["Area (deg^2)"] = sky_area
 
         display(df)
-
+        print(*df["Bin"], *df["obs/bkg"], file=open('/data/scratch/userspace/rbabu/J1849_analysis/NN/rhitest.txt', 'a'))
+        print(display(df), df, file=open('/data/scratch/userspace/rbabu/J1849_analysis/NN/rhitest2.txt', 'a'))
         first_bin_id = list(self._analysis_bins.keys())[0]
         log.info(
             "This Map Tree contains %.3f transits in the first bin"

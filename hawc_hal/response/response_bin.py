@@ -78,7 +78,7 @@ class ResponseBin(object):
         min_dec: np.ndarray,
         dec_center: np.ndarray,
         max_dec: np.ndarray,
-        bin_list3
+	bin_list3
     ):
         """
         Obtain the information from Response ROOT file
@@ -162,11 +162,11 @@ class ResponseBin(object):
         # Read the PSF and make a copy (so it will stay when we close the file)
         # NOTE: uproot doesn't have the ability to read and evaluate TF1
         try:
-
+            #Rishi print(dec_id, analysis_bin_id)
             psf_prefix = f"dec_{dec_id:02d}/nh_{analysis_bin_id}"
             psf_tf1_metadata = root_file[f"{psf_prefix}/PSF_dec{dec_id}_nh{analysis_bin_id}_fit"]
         except uproot.KeyInFileError:
-
+            #print(dec_id, analysis_bin_id)
             psf_prefix = f"dec_{dec_id:02d}/nh_0{analysis_bin_id}"
             psf_tf1_metadata = root_file[f"{psf_prefix}/PSF_dec{dec_id}_nh{analysis_bin_id}_fit"]
 
